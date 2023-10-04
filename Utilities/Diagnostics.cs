@@ -213,12 +213,12 @@ namespace Cobbs_Engine
             {
                 if (!all)
                 {
-                    if (Directory.GetFiles(IO.Paths[PathType.Diagnostics], "*", SearchOption.TopDirectoryOnly).Length > 10)
+                    if (Directory.GetFiles(IO.Paths[PathType.Diagnostics], "*", SearchOption.TopDirectoryOnly).Length > Configuration.MaximumDiagnostics)
                     {
                         var oldestFiles = Directory.EnumerateFiles(IO.Paths[PathType.Diagnostics])
                             .Select(fileName => new FileInfo(fileName))
                             .OrderByDescending(fileInfo => fileInfo.LastWriteTime)
-                            .Skip(10)
+                            .Skip((int)Configuration.MaximumDiagnostics)
                             .Select(fileInfo => fileInfo.FullName);
 
                         foreach (var file in oldestFiles)

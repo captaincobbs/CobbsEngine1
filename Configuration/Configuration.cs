@@ -25,6 +25,7 @@
 
         // Diagnostics Output
         internal const string DiagnosticsFileType = "html";
+        internal const uint MaximumDiagnostics = 10;
         #endregion
 
         #region Controls

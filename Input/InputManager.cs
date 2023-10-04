@@ -196,17 +196,27 @@ namespace Cobbs_Engine.Input
 
                         if (CurrentInputActionsOccuring[inputAction] && !PreviousInputActionsOccuring[inputAction])
                         {
-                            InputActionTriggered?.Invoke(this, inputAction);
+                            InvokeInputActionTriggered(inputAction);
                         }
                         
                         continue;
                     }
                     if (!CurrentInputActionsOccuring[inputAction] && PreviousInputActionsOccuring[inputAction])
                     {
-                        InputActionReleased?.Invoke(this, inputAction);
+                        InvokeInputActionReleased(inputAction);
                     }
                 }
             }
+        }
+
+        public void InvokeInputActionTriggered(InputAction inputAction)
+        {
+            InputActionTriggered?.Invoke(this, inputAction);
+        }
+
+        public void InvokeInputActionReleased(InputAction inputAction)
+        {
+            InputActionReleased?.Invoke(this, inputAction);
         }
     }
 }

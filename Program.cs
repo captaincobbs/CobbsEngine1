@@ -1,5 +1,4 @@
-﻿using Cobbs_Engine.Input;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -11,9 +10,9 @@ namespace Cobbs_Engine
 
         internal static class Properties
         {
-            internal static bool DebugEnabled { get; set; } = true;
-            internal static bool PortableEnabled { get; set; }
-            internal static bool LoggingEnabled { get; set; } = true;
+            internal static bool DebugEnabled = false;
+            internal static bool PortableEnabled = false;
+            internal static bool LoggingEnabled = true;
         }
 
         [STAThread]
@@ -25,8 +24,9 @@ namespace Cobbs_Engine
             Diagnostics.DiagnosticsPath = IO.Paths[PathType.Diagnostics];
             Diagnostics.Initialize();
 
+#if DEBUG
             Console.ShowWindow(Console.Window, Properties.DebugEnabled ? (int)ConsoleState.Open : (int)ConsoleState.Closed);
-
+#endif
             Diagnostics.LogMessage("Game starting...");
 
             AppDomain.CurrentDomain.ProcessExit += OnExit;
@@ -125,6 +125,7 @@ namespace Cobbs_Engine
         internal static void OnExit(object sender, EventArgs e)
         {
             Diagnostics.LogMessage("Program Exiting...");
+            string path = Diagnostics.LogPath;
             try
             {
                 IO.SaveSettings(MainGame.Settings);
@@ -136,23 +137,25 @@ namespace Cobbs_Engine
                 Diagnostics.LogException(ex);
             }
 
+#if DEBUG
             System.Console.WriteLine("\nPress any key to close the console.\nType '`' to open log in console");
             ConsoleKeyInfo keypress = System.Console.ReadKey();
             try
             {
                 if (keypress.Key == ConsoleKey.Oem3)
                 {
-                    System.Console.WriteLine(Diagnostics.LogPath);
-                    Process process = new();
-                    process.StartInfo = new ProcessStartInfo(Diagnostics.LogPath)
+                    Process process = new()
                     {
-                        UseShellExecute = true,
+                        StartInfo = new ProcessStartInfo(path)
+                        {
+                            UseShellExecute = true,
+                        }
                     };
                     process.Start();
-                }
-                    
+                } 
             }
             catch { }
+#endif
         }
     }
 }

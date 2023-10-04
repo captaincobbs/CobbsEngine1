@@ -9,6 +9,7 @@ namespace Cobbs_Engine
 {
     internal static partial class Program
     {
+#if DEBUG
         internal enum ConsoleState : byte
         {
             Open = 5,
@@ -35,5 +36,6 @@ namespace Cobbs_Engine
             [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
             internal static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
         }
+#endif
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cobbs_Engine.Input;
+using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Cobbs_Engine
@@ -38,7 +40,8 @@ namespace Cobbs_Engine
             }
             catch (Exception ex)
             {
-                Diagnostics.LogException(ex);
+                Diagnostics.LogException(ex, "Exception caught");
+                Diagnostics.LogMessage("The game has crashed due to an exception");
             }
         }
 
@@ -124,7 +127,7 @@ namespace Cobbs_Engine
             Diagnostics.LogMessage("Program Exiting...");
             try
             {
-                IO.SaveSettings(Game.Settings);
+                IO.SaveSettings(MainGame.Settings);
                 Diagnostics.Flush();
                 Diagnostics.Prune();
             }
@@ -133,8 +136,23 @@ namespace Cobbs_Engine
                 Diagnostics.LogException(ex);
             }
 
-            System.Console.WriteLine("\nPress any key to close the console.");
-            System.Console.ReadKey();
+            System.Console.WriteLine("\nPress any key to close the console.\nType '`' to open log in console");
+            ConsoleKeyInfo keypress = System.Console.ReadKey();
+            try
+            {
+                if (keypress.Key == ConsoleKey.Oem3)
+                {
+                    System.Console.WriteLine(IO.LogPath);
+                    Process process = new();
+                    process.StartInfo = new ProcessStartInfo(IO.LogPath)
+                    {
+                        UseShellExecute = true,
+                    };
+                    process.Start();
+                }
+                    
+            }
+            catch { }
         }
     }
 }

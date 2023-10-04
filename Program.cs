@@ -142,9 +142,9 @@ namespace Cobbs_Engine
             {
                 if (keypress.Key == ConsoleKey.Oem3)
                 {
-                    System.Console.WriteLine(IO.LogPath);
+                    System.Console.WriteLine(Diagnostics.LogPath);
                     Process process = new();
-                    process.StartInfo = new ProcessStartInfo(IO.LogPath)
+                    process.StartInfo = new ProcessStartInfo(Diagnostics.LogPath)
                     {
                         UseShellExecute = true,
                     };

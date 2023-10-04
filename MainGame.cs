@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Cobbs_Engine
 {
-    public class MainGame : Game
+    public partial class MainGame : Game
     {
         // Graphics
         public static (uint Width, uint Height) INTENDED_RESOLUTION { get; } = (1280, 720);
@@ -61,6 +61,9 @@ namespace Cobbs_Engine
                         break;
                     case InputAction.DebugOverlay:
                         ToggleDebugOverlay();
+                        break;
+                    case InputAction.Console:
+                        TakeConsoleInput();
                         break;
                     case InputAction.Fullscreen:
                         ToggleFullscreen();
@@ -160,6 +163,9 @@ namespace Cobbs_Engine
             DebugOverlay = !DebugOverlay;
             Diagnostics.LogDebug($"Debug overlay {(DebugOverlay ? "enabled" : "disabled")}");
         }
+
+        // Moved to its own file
+        public partial void TakeConsoleInput();
 
         public void ToggleFullscreen()
         {

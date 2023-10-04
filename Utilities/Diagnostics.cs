@@ -1,6 +1,7 @@
 ﻿using Pastel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace Cobbs_Engine
     public static partial class Diagnostics
     {
         public static string DiagnosticsPath { get; set; }
+        public static string LogPath { get; set; }
         public static string LogTime { get; private set; } = string.Empty;
         private static int logIndex;
         private static string logDate = string.Empty;
@@ -30,7 +32,7 @@ namespace Cobbs_Engine
         {
             LogTime = $"{DateTime.Now:yyyy-MM-dd @HH-mm-ss}";
             logDate = $"{DateTime.Now:U}";
-
+            LogPath = Path.Combine(IO.Paths[PathType.Diagnostics], $"Diagnostic - {LogTime}.{Configuration.DiagnosticsFileType}");
             if (Program.Properties.LoggingEnabled)
             {
                 InitializeLog();
@@ -43,45 +45,54 @@ namespace Cobbs_Engine
             logIndex = template.IndexOf("</content>");
             log = template;
 
-            foreach (string queuedLog in queuedLogs)
+            if (queuedLogs != null && queuedLogs.Count > 0)
             {
-                log = log.Insert(logIndex, queuedLog);
-                logIndex += queuedLog.Length;
+                foreach (string queuedLog in queuedLogs)
+                {
+                    log = log.Insert(logIndex, queuedLog);
+                    logIndex += queuedLog.Length;
+                }
+                queuedLogs = null;
             }
-            queuedLogs = null;
         }
 
-        public static void LogMessage(string message)
+        public static void LogMessage(string message, bool write = true)
         {
             if (Program.Properties.LoggingEnabled)
             {
                 Debug.WriteLine(message);
                 Console.WriteLine(message.Pastel(Colors[MessageType.Message]));
-                Write(message, MessageType.Message, new StackTrace(skipFrames: 1, true));
+
+                if (write)
+                    Write(message, MessageType.Message, new StackTrace(skipFrames: 1, true));
             }
         }
 
-        public static void LogWarning(string message)
+        public static void LogWarning(string message, bool write = true)
         {
             if (Program.Properties.LoggingEnabled)
             {
                 Debug.WriteLine(message);
                 Console.WriteLine(message.Pastel(Colors[MessageType.Warning]));
-                Write(message, MessageType.Warning, new StackTrace(skipFrames: 1, true));
+
+                if (write)
+                    Write(message, MessageType.Warning, new StackTrace(skipFrames: 1, true));
             }
         }
 
-        public static void LogError(string message)
+        public static void LogError(string message, bool write = true)
         {
             if (Program.Properties.LoggingEnabled)
             {
                 Debug.WriteLine(message);
                 Console.WriteLine(message.Pastel(Colors[MessageType.Error]));
-                Write(message, MessageType.Error, new StackTrace(skipFrames: 1, true));
+
+                if (write)
+                    Write(message, MessageType.Error, new StackTrace(skipFrames: 1, true));
             }
         }
 
-        public static void LogException(Exception ex, string errorMessage = null)
+        public static void LogException(Exception ex, string errorMessage = null, bool write = true)
         {
             if (Program.Properties.LoggingEnabled)
             {
@@ -95,11 +106,13 @@ namespace Cobbs_Engine
 
                 Debug.WriteLine(message.TrimEnd('\n'));
                 Console.WriteLine(message.TrimEnd('\n').Pastel(Colors[MessageType.Exception]));
-                Write($"{(errorMessage != null ? $"{errorMessage}: " : "")}{ex.Message}\n", MessageType.Exception, new StackTrace(ex, skipFrames: 1, true));
+
+                if (write)
+                    Write($"{(errorMessage != null ? $"{errorMessage}: " : "")}{ex.Message}\n", MessageType.Exception, new StackTrace(ex, skipFrames: 1, true));
             }
         }
 
-        public static void LogDebug(string message)
+        public static void LogDebug(string message, bool write = true)
         {
             if (Program.Properties.DebugEnabled && Program.Properties.LoggingEnabled)
             {
@@ -117,12 +130,12 @@ namespace Cobbs_Engine
             }
             catch (Exception ex)
             {
-                LogException(ex);
+                LogException(ex, "Logging action caused exception");
                 throw;
             }
         }
 
-        public static void LogAssert(bool condition, string message)
+        public static void LogAssert(bool condition, string message, bool write = true)
         {
             if (Program.Properties.LoggingEnabled && !condition)
             {
@@ -135,7 +148,7 @@ namespace Cobbs_Engine
         private static void Write(string message, MessageType messageType, StackTrace stack)
         {
             message = GenerateLogEvent(message, messageType, stack);
-            if (log != string.Empty)
+            if (logIndex != 0)
             {
                 log = log.Insert(logIndex, message);
                 logIndex += message.Length;
@@ -181,29 +194,45 @@ namespace Cobbs_Engine
             try
             {
                 IO.SaveDiagnostics(log);
+                log = string.Empty;
+                LogTime = $"{DateTime.Now:yyyy-MM-dd @HH-mm-ss}";
+                logDate = $"{DateTime.Now:U}";
+                LogPath = Path.Combine(IO.Paths[PathType.Diagnostics], $"Diagnostic - {LogTime}.{Configuration.DiagnosticsFileType}");
+                InitializeLog();
+                LogMessage("Sucessfully flushed log", false);
             }
             catch (Exception ex)
             {
-                LogException(ex, "Log has failed to save log");
+                LogException(ex, "Log has failed to save log", false);
             }
-            log = string.Empty;
         }
 
-        public static void Prune()
+        public static void Prune(bool all = false)
         {
             try
             {
-                if (Directory.GetFiles(IO.Paths[PathType.Diagnostics], "*", SearchOption.TopDirectoryOnly).Length > 10)
+                if (!all)
                 {
-                    var oldestFiles = Directory.EnumerateFiles(IO.Paths[PathType.Diagnostics])
-                        .Select(fileName => new FileInfo(fileName))
-                        .OrderByDescending(fileInfo => fileInfo.LastWriteTime)
-                        .Skip(10)
-                        .Select(fileInfo => fileInfo.FullName);
+                    if (Directory.GetFiles(IO.Paths[PathType.Diagnostics], "*", SearchOption.TopDirectoryOnly).Length > 10)
+                    {
+                        var oldestFiles = Directory.EnumerateFiles(IO.Paths[PathType.Diagnostics])
+                            .Select(fileName => new FileInfo(fileName))
+                            .OrderByDescending(fileInfo => fileInfo.LastWriteTime)
+                            .Skip(10)
+                            .Select(fileInfo => fileInfo.FullName);
 
-                    foreach (var file in oldestFiles)
-                        File.Delete(file);
+                        foreach (var file in oldestFiles)
+                            File.Delete(file);
+                    }
                 }
+                else
+                {
+                    foreach (string file in Directory.EnumerateFiles(IO.Paths[PathType.Diagnostics]))
+                    {
+                        LogMessage($"File deleted: {file}");
+                        File.Delete(file);
+                    }
+                } 
             }
             catch
             {

@@ -12,7 +12,6 @@ namespace Cobbs_Engine
     public static class IO
     {
         public static Dictionary<PathType, string> Paths { get; set; } = new Dictionary<PathType, string>();
-        public static string LogPath { get; set; }
         #region JSON
         public static string SerializeJson(object obj, Newtonsoft.Json.Formatting formatting = Newtonsoft.Json.Formatting.None, JsonConverter[] convertors = null)
         {
@@ -243,8 +242,7 @@ namespace Cobbs_Engine
             string path = "";
             try
             {
-                LogPath = Path.Combine(Paths[PathType.Diagnostics], $"Diagnostic - {Diagnostics.LogTime}.{Configuration.DiagnosticsFileType}");
-                path =  LogPath;
+                path =  Diagnostics.LogPath;
                 File.AppendAllTextAsync(path, logs);
             }
             catch (Exception)

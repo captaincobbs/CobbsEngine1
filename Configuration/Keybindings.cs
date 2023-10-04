@@ -14,6 +14,7 @@ namespace Cobbs_Engine
 
         [JsonProperty(PropertyName = "EXIT")]         public List<Keybinding> Exit         = new List<Keybinding>();
         [JsonProperty(PropertyName = "DEBUGOVERLAY")] public List<Keybinding> DebugOverlay = new List<Keybinding>();
+        [JsonProperty(PropertyName = "CONSOLE")]      public List<Keybinding> Console      = new List<Keybinding>();
         [JsonProperty(PropertyName = "FULLSCREEN")]   public List<Keybinding> Fullscreen   = new List<Keybinding>();
         [JsonProperty(PropertyName = "SCREENSHOT")]   public List<Keybinding> Screenshot   = new List<Keybinding>();
 
@@ -34,6 +35,7 @@ namespace Cobbs_Engine
 
                 def.Exit.Add(new Keybinding() { KeyboardKeys = new() { Keys.Escape } });
                 def.DebugOverlay.Add(new Keybinding() { KeyboardKeys = new() { Keys.F1 } });
+                def.Console.Add(new Keybinding() { KeyboardKeys = new() { Keys.F2 } });
                 def.Fullscreen.Add(new Keybinding() { KeyboardKeys = new() { Keys.F11 } });
                 def.Screenshot.Add(new Keybinding() { KeyboardKeys = new() { Keys.F12 } });
 

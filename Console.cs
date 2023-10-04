@@ -27,6 +27,13 @@ namespace Cobbs_Engine
             internal static extern int SetWindowText(IntPtr hWnd, string text);
 
             internal static readonly IntPtr Window = GetConsoleWindow();
+
+            [DllImport("user32.dll")]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            internal static extern bool SetForegroundWindow(IntPtr hWnd);
+
+            [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+            internal static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
         }
     }
 }

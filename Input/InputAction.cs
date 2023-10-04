@@ -8,6 +8,7 @@
         Right,
 
         Exit,
+        Console,
         DebugOverlay,
         Fullscreen,
         Screenshot,

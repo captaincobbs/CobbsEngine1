@@ -171,6 +171,7 @@ namespace Cobbs_Engine.Input
             Keybindings[InputAction.Right] = keybinding.Right;
 
             Keybindings[InputAction.Exit] = keybinding.Exit;
+            Keybindings[InputAction.Console] = keybinding.Console;
             Keybindings[InputAction.DebugOverlay] = keybinding.DebugOverlay;
             Keybindings[InputAction.Fullscreen] = keybinding.Fullscreen;
             Keybindings[InputAction.Screenshot] = keybinding.Screenshot;

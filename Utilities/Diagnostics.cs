@@ -89,11 +89,13 @@ namespace Cobbs_Engine
 
                 message += $"{(errorMessage != null ? $"{errorMessage}: " : "")}{ex.Message}\n";
                 if (!string.IsNullOrEmpty(ex.InnerException?.Message))
-                    message += $"Inner exception: {ex.InnerException?.Message}";
+                    message += $"Inner exception: {ex.InnerException?.Message}\n";
+                if (!string.IsNullOrEmpty(ex.ToString()))
+                    message += $"Stack Trace: {ex}";
 
-                Debug.WriteLine(message);
-                Console.WriteLine(message.Pastel(Colors[MessageType.Exception]));
-                Write(message, MessageType.Exception, new StackTrace(skipFrames: 1, true));
+                Debug.WriteLine(message.TrimEnd('\n'));
+                Console.WriteLine(message.TrimEnd('\n').Pastel(Colors[MessageType.Exception]));
+                Write($"{(errorMessage != null ? $"{errorMessage}: " : "")}{ex.Message}\n", MessageType.Exception, new StackTrace(ex, skipFrames: 1, true));
             }
         }
 
@@ -154,7 +156,7 @@ namespace Cobbs_Engine
                 string className = method.DeclaringType.FullName;
                 string fileName = frame.GetFileName();
                 int lineNumber = frame.GetFileLineNumber();
-                stackTrace += $"at {className}.{methodName}, in {fileName} on line {lineNumber}\n";
+                stackTrace += $"at {className}.{methodName}{(!string.IsNullOrEmpty(fileName)? $", in {fileName} on line {lineNumber}" : " from external namespace")}\n";
             }
 
             // Generate a log event as a string

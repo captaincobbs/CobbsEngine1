@@ -2,10 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Xml;
 using Newtonsoft.Json;
@@ -15,6 +12,7 @@ namespace Cobbs_Engine
     public static class IO
     {
         public static Dictionary<PathType, string> Paths { get; set; } = new Dictionary<PathType, string>();
+        public static string LogPath { get; set; }
         #region JSON
         public static string SerializeJson(object obj, Newtonsoft.Json.Formatting formatting = Newtonsoft.Json.Formatting.None, JsonConverter[] convertors = null)
         {
@@ -179,7 +177,62 @@ namespace Cobbs_Engine
                     break;
             }
 
-            Diagnostics.LogDebug("Settings Loaded");
+            Diagnostics.LogMessage("Settings Loaded");
+            return output;
+        }
+
+        public static void SaveKeybindings(Keybindings keybindings)
+        {
+            keybindings ??= Keybindings.Default;
+
+            string path = Path.Combine(Paths[PathType.Settings], $"keybindings.{Configuration.SettingsFileType}");
+
+            string output = null;
+            switch (Configuration.SettingsFileSerializer)
+            {
+                case SerializerType.Json:
+                    output = SerializeJson(keybindings, Newtonsoft.Json.Formatting.Indented, new JsonConverter[] { new StringEnumConverter() });
+                    break;
+
+                case SerializerType.XML:
+                    output = SerializeXML(keybindings);
+                    break;
+
+                case SerializerType.Binary:
+                    output = SerializeBinary(keybindings);
+                    break;
+            }
+
+            Diagnostics.LogMessage("Keybindings Saved");
+            SaveFile(path, output);
+        }
+
+        public static Keybindings LoadKeybindings()
+        {
+            string path = Path.Combine(Paths[PathType.Settings], $"keybindings.{Configuration.SettingsFileType}");
+
+            if (!File.Exists(path))
+                SaveKeybindings(Keybindings.Default);
+            string input = ReadFile(path);
+
+            Keybindings output = null;
+
+            switch (Configuration.SettingsFileSerializer)
+            {
+                case SerializerType.Json:
+                    output = DeserializeJSON<Keybindings>(input);
+                    break;
+
+                case SerializerType.XML:
+                    output = DeserializeXML<Keybindings>(input);
+                    break;
+
+                case SerializerType.Binary:
+                    output = DeserializeBinary<Keybindings>(input);
+                    break;
+            }
+
+            Diagnostics.LogMessage("Keybindings Loaded");
             return output;
         }
         #endregion
@@ -190,7 +243,8 @@ namespace Cobbs_Engine
             string path = "";
             try
             {
-                path = Path.Combine(Paths[PathType.Diagnostics], $"Diagnostic - {Diagnostics.LogTime}.{Configuration.DiagnosticsFileType}");
+                LogPath = Path.Combine(Paths[PathType.Diagnostics], $"Diagnostic - {Diagnostics.LogTime}.{Configuration.DiagnosticsFileType}");
+                path =  LogPath;
                 File.AppendAllTextAsync(path, logs);
             }
             catch (Exception)

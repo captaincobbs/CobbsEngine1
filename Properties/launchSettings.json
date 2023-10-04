@@ -1,0 +1,8 @@
+﻿{
+  "profiles": {
+    "MonoGameEngine4": {
+      "commandName": "Project",
+      "commandLineArgs": "-debug -portable"
+    }
+  }
+}

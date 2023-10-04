@@ -1,9 +1,11 @@
 ﻿using Cobbs_Engine.Components;
+using Cobbs_Engine.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Cobbs_Engine
 {
@@ -14,9 +16,11 @@ namespace Cobbs_Engine
         public static float INTENDED_ASPECT_RATIO { get { return INTENDED_RESOLUTION.Width / (float)INTENDED_RESOLUTION.Height; } }
         public static GameWindow GameWindow { get { return Instance.Window; } }
         public static MainGame Instance {
-            get { return Instance; }
-            set { Instance ??= value;}
+            get { return instance; }
+            set { instance ??= value;}
         }
+
+        private static MainGame instance;
 
         private RenderTarget2D renderTarget { get; set; }
         private Rectangle renderScaleRectangle { get; set; }
@@ -24,10 +28,13 @@ namespace Cobbs_Engine
         private SpriteBatch spriteBatch;
 
         // ECS
+        public InputManager Input;
+
         private Scene currentScene;
 
         // Configuration
-        public Settings Settings { get; set; }
+        public static Settings Settings { get; set; }
+        private bool DebugOverlay = false;
 
         public MainGame()
         {
@@ -39,6 +46,31 @@ namespace Cobbs_Engine
 
         protected override void Initialize()
         {
+            Input = new();
+
+            Settings = IO.LoadSettings();
+            ApplySettings(Settings);
+            Input.AddKeybindings(IO.LoadKeybindings());
+
+            Input.InputActionTriggered += (sender, action) =>
+            {
+                switch (action)
+                {
+                    case InputAction.Exit:
+                        Exit();
+                        break;
+                    case InputAction.DebugOverlay:
+                        ToggleDebugOverlay();
+                        break;
+                    case InputAction.Fullscreen:
+                        ToggleFullscreen();
+                        break;
+                    case InputAction.Screenshot:
+                        TakeScreenshot();
+                        break;
+                }
+            };
+
             GameWindow.AllowUserResizing = true;
             GameWindow.IsBorderless = true;
             GameWindow.ClientSizeChanged += MainGame_OnWindowResized;
@@ -79,14 +111,7 @@ namespace Cobbs_Engine
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            if (Keyboard.GetState().IsKeyDown(Keys.F12))
-                TakeScreenshot();
-
-            if (Keyboard.GetState().IsKeyDown(Keys.F11))
-                ToggleFullscreen();
+            Input.Update(gameTime);
 
             currentScene?.HandleInput(gameTime);
             currentScene?.Update(gameTime);
@@ -130,10 +155,16 @@ namespace Cobbs_Engine
             currentScene.OnEventNotification += CurrentScene_OnEventNotification;
         }
 
+        public void ToggleDebugOverlay()
+        {
+            DebugOverlay = !DebugOverlay;
+            Diagnostics.LogDebug($"Debug overlay {(DebugOverlay ? "enabled" : "disabled")}");
+        }
+
         public void ToggleFullscreen()
         {
             graphics.ToggleFullScreen();
-            //Settings.IsFullscreen = !Settings.IsFullscreen;
+            Settings.IsFullscreen = !Settings.IsFullscreen;
             RecalculatePositions();
         }
 
@@ -178,6 +209,19 @@ namespace Cobbs_Engine
 
                 return new Rectangle(barWidth, 0, presentWidth, Window.ClientBounds.Height);
             }
+        }
+
+        private void ApplySettings(Settings settings)
+        {
+            // Apply resolution & vsync
+            graphics.PreferredBackBufferWidth = Settings.Width;
+            graphics.PreferredBackBufferHeight = Settings.Height;
+            graphics.SynchronizeWithVerticalRetrace = Settings.IsVsync;
+            graphics.IsFullScreen = Settings.IsFullscreen;
+            graphics.HardwareModeSwitch = !Settings.IsBorderless;
+            graphics.ApplyChanges();
+
+            Diagnostics.LogMessage("Settings Applied");
         }
 
         private void MainGame_OnWindowResized(object sender, EventArgs e)

@@ -1,12 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Cobbs_Engine.Input;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cobbs_Engine.Components
 {
@@ -52,7 +47,7 @@ namespace Cobbs_Engine.Components
                 Matrix.CreateTranslation(new Vector3(MainGame.GameWindow.ClientBounds.Width * 0.5f, MainGame.GameWindow.ClientBounds.Height * 0.5f, 0));
         }
 
-        public void HandleInput()
+        public void HandleInput(InputManager inputManager)
         {
             if (CameraFocus.GetType() == typeof(PlayerControlled))
             {
@@ -60,19 +55,19 @@ namespace Cobbs_Engine.Components
             }
 
             // Scroll In
-            if (InputManager.IsActionPressed(InputManager.InputAction.ZoomIn))
+            if (inputManager.CurrentInputActionsOccuring[InputAction.ZoomIn])
             {
-                ZoomTarget += Configuration.CameraZoomThreshold * InputManager.GetActionScroll(InputManager.InputAction.ZoomIn);
+                ZoomTarget += Configuration.CameraZoomThreshold * Configuration.ScrollSensitivity / Configuration.InputSensitivity;
             }
 
             // Scroll Out
-            if (InputManager.IsActionPressed(InputManager.InputAction.ZoomOut))
+            if (inputManager.CurrentInputActionsOccuring[InputAction.ZoomOut])
             {
-                ZoomTarget -= Configuration.CameraZoomThreshold * InputManager.GetActionScroll(InputManager.InputAction.ZoomOut);
+                ZoomTarget -= Configuration.CameraZoomThreshold * Configuration.ScrollSensitivity / Configuration.InputSensitivity;
             }
 
             // Reset camera zoom
-            if (InputManager.IsActionPressed(InputManager.InputAction.ZoomReset))
+            if (inputManager.CurrentInputActionsOccuring[InputAction.ZoomReset])
             {
                 ZoomTarget = 2f;
             }

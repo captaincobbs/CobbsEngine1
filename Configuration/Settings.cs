@@ -21,6 +21,9 @@ namespace Cobbs_Engine
         [JsonProperty(PropertyName = "BORDERLESS")]
         public bool IsBorderless { get; set; } = true;
 
+        [JsonProperty(PropertyName = "GAMEPAD_TRIGGER_THRESHOLD")]
+        public float GamePadTriggerThreshold { get; set; } = 0.75f;
+
         public static Settings Default
         {
             get

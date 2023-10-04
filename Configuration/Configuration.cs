@@ -33,6 +33,8 @@
         internal const float CameraScrollInertia = 0.04f;
         internal const float CameraZoomInertia = 0.15f;
         internal const float CameraZoomThreshold = 0.75f;
+        internal const float InputSensitivity = 15f;
+        internal const float ScrollSensitivity = 10f;
         #endregion
     }
 }

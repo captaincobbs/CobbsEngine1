@@ -18,13 +18,14 @@ namespace Cobbs_Engine
             string help = @"
 List of Commands
 ===================
-- flushlog       : Flushes the log, outputting it to the diagnostics folder
-- showlog        : Flushes log, then opens it in default web browser
-- manuallog      : Allows the user to add a manual log message. Message is all proceeding characters after the space following the command.
-- prunelogs      : Deletes all log files
-- showexecutable : Opens the folder of the executable
-- triggeraction  : Triggers an InputAction, requires a proceding InputAction argument (case sensitive)
-- quit           : Closes the program";
+- flushlog          : Flushes the log, outputting it to the diagnostics folder
+- showlog           : Flushes log, then opens it in default web browser
+- manuallog         : Allows the user to add a manual log message. Message is all proceeding characters after the space following the command.
+- prunelogs         : Deletes all log files
+- showexecutable    : Opens the folder of the executable
+- triggeraction     : Triggers an InputAction, requires a proceding InputAction argument (case sensitive)
+- showlocalization  : Shows an input localization pair (following argument), displays all loaded languages unless followed by a third argument of a valid language
+- quit              : Closes the program";
 
             Console.Write("\n");
             Console.Write("Enter a command: ".Pastel("#FFFFFF"));
@@ -67,7 +68,7 @@ List of Commands
                     }
                     else
                     {
-                        Diagnostics.LogMessage("command: flushlog\nAllows the user to add a manual log message. Message is all proceeding characters after the space following the command.", false);
+                        Diagnostics.LogMessage("command: flushlog\nAllows the user to add a manual log message. Message is all proceding characters after the space following the command.", false);
                     }
                     break;
                 case "prunelogs":
@@ -149,6 +150,79 @@ List of Commands
                     else
                     {
                         Diagnostics.LogMessage("command: triggeraction\nTriggers an InputAction, requires a proceding InputAction argument (case sensitive)", false);
+                    }
+                    break;
+                case "showlocalization":
+                    if (!otherArguments.Contains("--help"))
+                    {
+                        if (inputArguments.Length == 2)
+                        {
+                            bool exists = false;
+                            string output = $"Key: '{inputArguments[1]}'\n================\n";
+                            if (Localization.LoadedLanguages == 0)
+                            {
+                                Diagnostics.LogMessage("There are no loaded languages to search", false);
+                            }
+
+                            foreach (Language language in Enum.GetValues(typeof(Language)))
+                            {
+                                if (language == Language.None)
+                                {
+                                    continue;
+                                }
+
+                                if (Localization.LocalizationPairExists(inputArguments[1], language))
+                                {
+                                    exists = true;
+                                    string value = Localization.GetLocalizationPair(inputArguments[1], language);
+                                    if (value != inputArguments[1])
+                                    {
+                                        output += $"{Enum.GetName(language)} : '{Localization.GetLocalizationPair(inputArguments[1], language)}'\n";
+                                    }
+                                }
+                            }
+
+                            if (exists)
+                            {
+                                Diagnostics.LogMessage(output.Trim(), false);
+                            }
+                            else
+                            {
+                                Diagnostics.LogMessage($"Key '{inputArguments[1]}' not found", false);
+                            }
+                        }
+                        else if (inputArguments.Length == 3)
+                        {
+                            string output = $"Key: '{inputArguments[1]}'\n";
+
+                            Language language = Language.None;
+                            bool casted = Enum.TryParse(inputArguments[2], out language);
+
+                            if (casted)
+                            {
+                                string value = Localization.GetLocalizationPair(inputArguments[1], language, false);
+
+                                if (value == inputArguments[1])
+                                {
+                                    Diagnostics.LogMessage($"{output}Value '{value.Pastel(Diagnostics.Colors[Diagnostics.MessageType.Error])}'", false, true, false);
+                                }
+
+                                output += $"Value: '{value}'";
+                                Diagnostics.LogMessage(output, false, false);
+                            }
+                            else
+                            {
+                                Diagnostics.LogMessage($"Language '{inputArguments[2]}' not found", false);
+                            }
+                        }
+                        else
+                        {
+                            Diagnostics.LogMessage("Invalid input", false);
+                        }
+                    }
+                    else
+                    {
+                        Diagnostics.LogMessage("command: showlocalization\nShows an input localization pair (following argument), displays all loaded languages unless followed by a third argument of a valid language", false);
                     }
                     break;
                 case "commands":

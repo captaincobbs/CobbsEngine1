@@ -106,6 +106,7 @@ namespace Cobbs_Engine
             string diagnosticPath = Configuration.DiagnosticsPath.Replace("~\\", $"{IO.Paths[PathType.UserData]}\\").Replace("@\\", $"{IO.Paths[PathType.Executable]}\\");
             string settingsPath = Configuration.SettingsPath.Replace("~\\", $"{IO.Paths[PathType.UserData]}\\").Replace("@\\", $"{IO.Paths[PathType.Executable]}\\");
             string mediaPath = Configuration.MediaPath.Replace("~\\", $"{IO.Paths[PathType.UserData]}\\").Replace("@\\", $"{IO.Paths[PathType.Executable]}\\");
+            string localizationPath = Configuration.LocalizationPath.Replace("~\\", $"{IO.Paths[PathType.UserData]}\\").Replace("@\\", $"{IO.Paths[PathType.Executable]}\\");
 
             IO.Paths[PathType.Plugins] = pluginPath;
             IO.Paths[PathType.Content] = contentPath;
@@ -113,6 +114,7 @@ namespace Cobbs_Engine
             IO.Paths[PathType.Diagnostics] =diagnosticPath;
             IO.Paths[PathType.Settings] = settingsPath;
             IO.Paths[PathType.Media] = mediaPath;
+            IO.Paths[PathType.Localization] = localizationPath;
 
             IO.ValidatePath(IO.Paths[PathType.Plugins]);
             IO.ValidatePath(IO.Paths[PathType.Content]);
@@ -120,6 +122,7 @@ namespace Cobbs_Engine
             IO.ValidatePath(IO.Paths[PathType.Diagnostics]);
             IO.ValidatePath(IO.Paths[PathType.Settings]);
             IO.ValidatePath(IO.Paths[PathType.Media]);
+            IO.ValidatePath(IO.Paths[PathType.Localization]);
         }
 
         internal static void OnExit(object sender, EventArgs e)

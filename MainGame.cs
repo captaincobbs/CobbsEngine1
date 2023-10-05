@@ -44,6 +44,8 @@ namespace Cobbs_Engine
 
         protected override void Initialize()
         {
+            Localization.Initialize();
+
             Input = new();
 
             Settings = IO.LoadSettings();
@@ -100,6 +102,8 @@ namespace Cobbs_Engine
 
         protected override void LoadContent()
         {
+            Localization.LoadContent();
+
             spriteBatch = new SpriteBatch(GraphicsDevice);
             //SwitchScurrentScene();
         }
@@ -125,9 +129,12 @@ namespace Cobbs_Engine
             GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.White);
 
-            spriteBatch?.Begin();
-            currentScene?.Draw(spriteBatch);
-            spriteBatch?.End();
+            if (currentScene != null)
+            {
+                spriteBatch?.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, null, null, null, currentScene.Camera.Matrix);
+                currentScene?.Draw(spriteBatch);
+                spriteBatch?.End();
+            }
 
             // Scale rendered content
             graphics.GraphicsDevice.SetRenderTarget(null);
@@ -150,7 +157,7 @@ namespace Cobbs_Engine
             }
 
             currentScene = scene;
-            currentScene.Initialize(Content);
+            currentScene.Initialize(Content, graphics.GraphicsDevice);
             currentScene.LoadContent();
             currentScene.OnSceneSwitched += CurrentScene_OnSceneSwitched;
             currentScene.OnEventNotification += CurrentScene_OnEventNotification;

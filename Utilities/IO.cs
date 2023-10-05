@@ -234,6 +234,18 @@ namespace Cobbs_Engine
             Diagnostics.LogMessage("Keybindings Loaded");
             return output;
         }
+
+        public static Dictionary<string, string> LoadLocalization(string filename)
+        {
+            string path = Path.Combine(Paths[PathType.Localization], filename);
+            if (!File.Exists(path))
+            {
+                Diagnostics.LogError($"Localization file '{path}' not found");
+                return null;
+            }
+
+            return DeserializeJSON<Dictionary<string, string>>(ReadFile(path));
+        }
         #endregion
 
         #region Diagnostics
@@ -270,5 +282,6 @@ namespace Cobbs_Engine
         Settings,
         Save,
         Media,
+        Localization,
     }
 }

@@ -13,6 +13,7 @@
         internal const string SettingsPath = "~\\settings";
         internal const string SavePath = "~\\saves";
         internal const string MediaPath = "~\\media";
+        internal const string LocalizationPath = "@\\content\\Localization";
 
         // Settings Output
         internal const string SettingsFileType = "json";

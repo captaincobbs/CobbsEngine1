@@ -176,7 +176,7 @@ namespace Cobbs_Engine.Input
             Keybindings[InputAction.Fullscreen] = keybinding.Fullscreen;
             Keybindings[InputAction.Screenshot] = keybinding.Screenshot;
 
-            Diagnostics.LogMessage("Keybindings applied");
+            Diagnostics.LogMessage("Keybindings Applied");
         }
 
         public void Update(GameTime gameTime)
@@ -211,12 +211,22 @@ namespace Cobbs_Engine.Input
 
         public void InvokeInputActionTriggered(InputAction inputAction)
         {
-            InputActionTriggered?.Invoke(this, inputAction);
+            EventHandler<InputAction> handler = InputActionTriggered;
+
+            if (handler != null)
+            {
+                handler.Invoke(this, inputAction);
+            }
         }
 
         public void InvokeInputActionReleased(InputAction inputAction)
         {
-            InputActionReleased?.Invoke(this, inputAction);
+            EventHandler<InputAction> handler = InputActionReleased;
+
+            if (handler != null)
+            {
+                handler.Invoke(this, inputAction);
+            }
         }
     }
 }

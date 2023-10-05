@@ -19,7 +19,7 @@ namespace Cobbs_Engine
         private static string log = string.Empty;
         private static List<string> queuedLogs = new();
 
-        private static readonly Dictionary<MessageType, string> Colors = new() {
+        public static readonly Dictionary<MessageType, string> Colors = new() {
             { MessageType.Message, "#EEEEEE" },
             { MessageType.Warning, "#FF8F00" },
             { MessageType.Error, "#FF2A2A" },
@@ -56,43 +56,52 @@ namespace Cobbs_Engine
             }
         }
 
-        public static void LogMessage(string message, bool write = true)
+        public static void LogMessage(string message, bool write = true, bool console = true, bool debug = true)
         {
             if (Program.Properties.LoggingEnabled)
             {
-                Debug.WriteLine(message);
-                Console.WriteLine(message.Pastel(Colors[MessageType.Message]));
+                if (debug)
+                    Debug.WriteLine(message);
+
+                if (console)
+                    Console.WriteLine(message.Pastel(Colors[MessageType.Message]));
 
                 if (write)
                     Write(message, MessageType.Message, new StackTrace(skipFrames: 1, true));
             }
         }
 
-        public static void LogWarning(string message, bool write = true)
+        public static void LogWarning(string message, bool write = true, bool console = true, bool debug = true)
         {
             if (Program.Properties.LoggingEnabled)
             {
-                Debug.WriteLine(message);
-                Console.WriteLine(message.Pastel(Colors[MessageType.Warning]));
+                if (debug)
+                    Debug.WriteLine(message);
+
+                if (console)
+                    Console.WriteLine(message.Pastel(Colors[MessageType.Warning]));
 
                 if (write)
                     Write(message, MessageType.Warning, new StackTrace(skipFrames: 1, true));
             }
         }
 
-        public static void LogError(string message, bool write = true)
+        public static void LogError(string message, bool write = true, bool console = true, bool debug = true)
         {
             if (Program.Properties.LoggingEnabled)
             {
-                Debug.WriteLine(message);
-                Console.WriteLine(message.Pastel(Colors[MessageType.Error]));
+                if (debug)
+                    Debug.WriteLine(message);
+
+                if (console)
+                    Console.WriteLine(message.Pastel(Colors[MessageType.Error]));
 
                 if (write)
                     Write(message, MessageType.Error, new StackTrace(skipFrames: 1, true));
             }
         }
 
-        public static void LogException(Exception ex, string errorMessage = null, bool write = true)
+        public static void LogException(Exception ex, string errorMessage = null, bool write = true, bool console = true, bool debug = true)
         {
             if (Program.Properties.LoggingEnabled)
             {
@@ -104,7 +113,9 @@ namespace Cobbs_Engine
                 if (!string.IsNullOrEmpty(ex.ToString()))
                     message += $"Stack Trace: {ex}";
 
-                Debug.WriteLine(message.TrimEnd('\n'));
+                if (debug)
+                    Debug.WriteLine(message.TrimEnd('\n'));
+
                 Console.WriteLine(message.TrimEnd('\n').Pastel(Colors[MessageType.Exception]));
 
                 if (write)
@@ -112,13 +123,18 @@ namespace Cobbs_Engine
             }
         }
 
-        public static void LogDebug(string message, bool write = true)
+        public static void LogDebug(string message, bool write = true, bool console = true, bool debug = true)
         {
             if (Program.Properties.DebugEnabled && Program.Properties.LoggingEnabled)
             {
-                Debug.WriteLine(message);
-                Console.WriteLine(message.Pastel(Colors[MessageType.Debug]));
-                Write(message, MessageType.Debug, new StackTrace(skipFrames: 1, true));
+                if (debug)
+                    Debug.WriteLine(message);
+
+                if (console)
+                    Console.WriteLine(message.Pastel(Colors[MessageType.Debug]));
+
+                if (write)
+                    Write(message, MessageType.Debug, new StackTrace(skipFrames: 1, true));
             }
         }
 
@@ -135,13 +151,18 @@ namespace Cobbs_Engine
             }
         }
 
-        public static void LogAssert(bool condition, string message, bool write = true)
+        public static void LogAssert(bool condition, string message, bool write = true, bool console = true, bool debug = true)
         {
             if (Program.Properties.LoggingEnabled && !condition)
             {
-                Debug.WriteLine($"{message}");
-                Console.WriteLine($"{message}".Pastel(Colors[MessageType.Assert]));
-                Write($"{message}", MessageType.Assert, new StackTrace(skipFrames: 1, true));
+                if (debug)
+                    Debug.WriteLine(message);
+
+                if (console)
+                    Console.WriteLine($"{message}".Pastel(Colors[MessageType.Assert]));
+
+                if (write)
+                    Write($"{message}", MessageType.Assert, new StackTrace(skipFrames: 1, true));
             }
         }
 

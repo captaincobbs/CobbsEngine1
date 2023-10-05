@@ -14,15 +14,25 @@ namespace Cobbs_Engine.Components
         protected List<GameObject> gameObjects = new();
         protected Dictionary<ISceneEvent, List<GameObject>> eventSubscribers = new();
         protected ContentManager contentManager;
-        protected Camera camera;
+        protected GraphicsDevice graphicsDevice;
+
+        public Camera Camera;
 
         public event EventHandler<Scene> OnSceneSwitched;
         public event EventHandler<ISceneEvent> OnEventNotification;
 
-        public virtual void Initialize(ContentManager contentManager, Camera camera = null)
+        public virtual void Initialize(ContentManager contentManager, GraphicsDevice graphicsDevice, Camera camera = null)
         {
             this.contentManager = contentManager;
-            this.camera = camera;
+            this.graphicsDevice = graphicsDevice;
+
+            if (camera == null)
+            {
+                this.Camera = new Camera(graphicsDevice.Viewport, new StaticFocus(Vector2.Zero));
+            }
+            else
+                this.Camera = camera;
+
         }
 
         public virtual void LoadContent()

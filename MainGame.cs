@@ -52,7 +52,7 @@ namespace Cobbs_Engine
             ApplySettings(Settings);
             Input.AddKeybindings(IO.LoadKeybindings());
 
-            Input.InputActionTriggered += (sender, action) =>
+            Input.InputActionTriggered += (_, action) =>
             {
                 switch (action)
                 {
@@ -132,7 +132,7 @@ namespace Cobbs_Engine
             if (currentScene != null)
             {
                 spriteBatch?.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, null, null, null, currentScene.Camera.Matrix);
-                currentScene?.Draw(spriteBatch);
+                currentScene.Draw(spriteBatch);
                 spriteBatch?.End();
             }
 
@@ -225,11 +225,11 @@ namespace Cobbs_Engine
         private void ApplySettings(Settings settings)
         {
             // Apply resolution & vsync
-            graphics.PreferredBackBufferWidth = Settings.Width;
-            graphics.PreferredBackBufferHeight = Settings.Height;
-            graphics.SynchronizeWithVerticalRetrace = Settings.IsVsync;
-            graphics.IsFullScreen = Settings.IsFullscreen;
-            graphics.HardwareModeSwitch = !Settings.IsBorderless;
+            graphics.PreferredBackBufferWidth = settings.Width;
+            graphics.PreferredBackBufferHeight = settings.Height;
+            graphics.SynchronizeWithVerticalRetrace = settings.IsVsync;
+            graphics.IsFullScreen = settings.IsFullscreen;
+            graphics.HardwareModeSwitch = !settings.IsBorderless;
             graphics.ApplyChanges();
 
             Diagnostics.LogMessage("Settings Applied");

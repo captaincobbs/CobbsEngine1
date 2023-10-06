@@ -137,7 +137,7 @@ namespace Cobbs_Engine
             }
             catch (Exception ex)
             {
-                Diagnostics.LogException(ex);
+                Diagnostics.LogException(ex, "Failed to save diagnostics", false);
             }
 
 #if DEBUG
@@ -155,9 +155,12 @@ namespace Cobbs_Engine
                         }
                     };
                     process.Start();
-                } 
+                }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Diagnostics.LogException(ex, "Failed to open console", false);
+            }
 #endif
         }
     }

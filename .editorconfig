@@ -116,6 +116,21 @@ dotnet_diagnostic.S2223.severity = none
 # S2190: Loops and recursions should not be infinite
 dotnet_diagnostic.S2190.severity = none
 
+# S2583: Conditionally executed code should be reachable
+dotnet_diagnostic.S2583.severity = none
+
+# S1168: Empty arrays and collections should be returned instead of null
+dotnet_diagnostic.S1168.severity = none
+
+# S4220: Events should have proper arguments
+dotnet_diagnostic.S4220.severity = none
+
+# RCS1235: Optimize method call.
+dotnet_diagnostic.RCS1235.severity = none
+
+# CA1806: Do not ignore method results
+dotnet_diagnostic.CA1806.severity = silent
+
 [*.{cs,vb}]
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4

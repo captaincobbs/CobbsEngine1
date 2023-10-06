@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Cobbs_Engine.Input
 {
-    public struct KeyboardStateExtended
+    public readonly struct KeyboardStateExtended
     {
         public readonly KeyboardState currentKeyboardState;
         public readonly KeyboardState previousKeyboardState;

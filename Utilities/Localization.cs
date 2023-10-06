@@ -185,12 +185,7 @@ namespace Cobbs_Engine
 
         private static void OnLanguageChanged(EventArgs e, Language language)
         {
-            EventHandler<Language> handler = LanguageSwitched;
-
-            if (handler != null)
-            {
-                handler.Invoke(e, language);
-            }
+            LanguageSwitched?.Invoke(e, language);
         }
     }
 

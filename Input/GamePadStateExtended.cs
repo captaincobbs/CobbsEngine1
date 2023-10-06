@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Cobbs_Engine.Input
 {
-    public struct GamePadStateExtended
+    public readonly struct GamePadStateExtended
     {
         private readonly GamePadState currentGamePadState;
         private readonly GamePadState previousGamePadState;

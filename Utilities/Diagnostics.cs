@@ -45,7 +45,7 @@ namespace Cobbs_Engine
             logIndex = template.IndexOf("</content>");
             log = template;
 
-            if (queuedLogs != null && queuedLogs.Count > 0)
+            if (queuedLogs?.Count > 0)
             {
                 foreach (string queuedLog in queuedLogs)
                 {
@@ -116,7 +116,8 @@ namespace Cobbs_Engine
                 if (debug)
                     Debug.WriteLine(message.TrimEnd('\n'));
 
-                Console.WriteLine(message.TrimEnd('\n').Pastel(Colors[MessageType.Exception]));
+                if (console)
+                    Console.WriteLine(message.TrimEnd('\n').Pastel(Colors[MessageType.Exception]));
 
                 if (write)
                     Write($"{(errorMessage != null ? $"{errorMessage}: " : "")}{ex.Message}\n", MessageType.Exception, new StackTrace(ex, skipFrames: 1, true));
@@ -253,7 +254,7 @@ namespace Cobbs_Engine
                         LogMessage($"File deleted: {file}");
                         File.Delete(file);
                     }
-                } 
+                }
             }
             catch
             {

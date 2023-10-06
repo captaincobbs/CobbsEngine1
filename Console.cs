@@ -33,7 +33,7 @@ namespace Cobbs_Engine
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetForegroundWindow(IntPtr hWnd);
 
-            [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+            [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
         }
 #endif

@@ -15,7 +15,7 @@ namespace Cobbs_Engine
 #if DEBUG
             Program.Console.SetForegroundWindow(Program.Console.GetConsoleWindow());
 #endif
-            string help = @"
+            const string help = @"
 List of Commands
 ===================
 - flushlog          : Flushes the log, outputting it to the diagnostics folder
@@ -31,7 +31,7 @@ List of Commands
             Console.Write("Enter a command: ".Pastel("#FFFFFF"));
             string input = Console.ReadLine();
 
-            if (input == null || input.Length == 0)
+            if (string.IsNullOrEmpty(input))
             {
                 return;
             }
@@ -103,8 +103,7 @@ List of Commands
                             {
                                 message += fragment + " ";
                             }
-                            message.Trim();
-                            Diagnostics.LogMessage(message);
+                            Diagnostics.LogMessage(message.Trim());
                         }
                     }
                     else
@@ -137,8 +136,7 @@ List of Commands
 
                         if (inputArguments.Length > 1 && inputActions.Contains(inputArguments[1]))
                         {
-                            InputAction actionToInvoke;
-                            Enum.TryParse(inputArguments[1], out actionToInvoke);
+                            Enum.TryParse(inputArguments[1], out InputAction actionToInvoke);
 
                             Input.InvokeInputActionTriggered(actionToInvoke);
                         }
@@ -195,8 +193,7 @@ List of Commands
                         {
                             string output = $"Key: '{inputArguments[1]}'\n";
 
-                            Language language = Language.None;
-                            bool casted = Enum.TryParse(inputArguments[2], out language);
+                            bool casted = Enum.TryParse(inputArguments[2], out Language language);
 
                             if (casted)
                             {

@@ -4,8 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cobbs_Engine.Components
 {
@@ -26,12 +24,7 @@ namespace Cobbs_Engine.Components
             this.contentManager = contentManager;
             this.graphicsDevice = graphicsDevice;
 
-            if (camera == null)
-            {
-                this.Camera = new Camera(graphicsDevice.Viewport, new StaticFocus(Vector2.Zero));
-            }
-            else
-                this.Camera = camera;
+            this.Camera = camera ?? new Camera(graphicsDevice.Viewport, new StaticFocus(Vector2.Zero));
 
         }
 

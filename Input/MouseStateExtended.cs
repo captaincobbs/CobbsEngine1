@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Cobbs_Engine.Input
 {
-    public struct MouseStateExtended
+    public readonly struct MouseStateExtended
     {
         private readonly MouseState currentMouseState;
         private readonly MouseState previousMouseState;
@@ -95,26 +95,24 @@ namespace Cobbs_Engine.Input
 
         public bool WasButtonReleased(MouseAction button)
         {
+            switch (button)
             {
-                switch (button)
-                {
-                    case MouseAction.ClickLeft:
-                        return previousMouseState.LeftButton == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released;
+                case MouseAction.ClickLeft:
+                    return previousMouseState.LeftButton == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released;
 
-                    case MouseAction.ClickRight:
-                        return previousMouseState.RightButton == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released;
+                case MouseAction.ClickRight:
+                    return previousMouseState.RightButton == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released;
 
-                    case MouseAction.ClickMiddle:
-                        return previousMouseState.MiddleButton == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released;
+                case MouseAction.ClickMiddle:
+                    return previousMouseState.MiddleButton == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released;
 
-                    case MouseAction.ClickSideButton1:
-                        return previousMouseState.XButton1 == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released;
+                case MouseAction.ClickSideButton1:
+                    return previousMouseState.XButton1 == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released;
 
-                    case MouseAction.ClickSideButton2:
-                        return previousMouseState.XButton2 == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released;
-                }
-                return false;
+                case MouseAction.ClickSideButton2:
+                    return previousMouseState.XButton2 == ButtonState.Pressed && currentMouseState.LeftButton == ButtonState.Released;
             }
+            return false;
         }
     }
 }
